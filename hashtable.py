@@ -1,6 +1,4 @@
-import math
-
-
+# E. Develop a hash table, without using any additional libraries or classes.
 class HashTable:
 
     def __init__(self, capacity=100, load_factor=0.75):
@@ -40,6 +38,7 @@ class HashTable:
         bucket_index = self._hash(key)
         bucket_value = (key, value)
         bucket = self.table[bucket_index]
+        print(self.table)
         if bucket is None:
             self.table[bucket_index] = list(bucket_value)
         else:
@@ -68,7 +67,7 @@ class HashTable:
 
     def _increment_size(self):
         # resize if threshold is violated
-        if self.size + 1 >= math.ceil(len(self.table) * self.load_factor):
+        if self.size + 1 >= HashTable._ceil(len(self.table) * self.load_factor):
             self._resize()
         self.size += 1
 
@@ -81,3 +80,8 @@ class HashTable:
         for i in range(0, table_len):
             temp[i] = self.table[i]
         self.table = temp
+
+    @staticmethod
+    def _ceil(n):
+        # rolling my own ceil function just in case the math module is not allowed
+        return int(-1 * n // 1 * -1)

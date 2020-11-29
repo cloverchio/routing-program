@@ -38,15 +38,11 @@ class HashTable:
         bucket_index = self._hash(key)
         bucket_value = (key, value)
         bucket = self.table[bucket_index]
-        print(self.table)
-        if bucket is None:
-            self.table[bucket_index] = list(bucket_value)
-        else:
-            for i in range(0, len(bucket)):
-                if bucket[i][0] == key:
-                    bucket[i] = bucket_value
-                    return
-            bucket.append(bucket_value)
+        for i in range(0, len(bucket)):
+            if bucket[i][0] == key:
+                bucket[i] = bucket_value
+                return
+        bucket.append(bucket_value)
 
     def remove(self, key):
         """
@@ -61,25 +57,30 @@ class HashTable:
                 if bucket[i][0] == key:
                     bucket.pop(i)
                     self._decrement_size()
+                    return
 
     def _hash(self, key):
         return hash(key) % len(self.table)
 
     def _increment_size(self):
-        # resize if threshold is violated
-        if self.size + 1 >= HashTable._ceil(len(self.table) * self.load_factor):
-            self._resize()
+        current_load_factor = (1.0 * self.size) / len(self.table)
+        if current_load_factor > self.load_factor:
+            self._rehash()
         self.size += 1
 
     def _decrement_size(self):
         self.size -= 1
 
-    def _resize(self):
-        table_len = len(self.table)
-        temp = [None] * (table_len * 2)
-        for i in range(0, table_len):
-            temp[i] = self.table[i]
-        self.table = temp
+    def _rehash(self):
+        temp = self.table.copy()
+        self.table.clear()
+        self.size = 0
+        for i in range(0, len(temp) * 2):
+            self.table.append([])
+        for bucket in temp:
+            if bucket:
+                for entry in bucket:
+                    self.add(entry[0], entry[1])
 
     @staticmethod
     def _ceil(n):

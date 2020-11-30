@@ -1,3 +1,7 @@
+class VertexNotFoundError(Exception):
+    pass
+
+
 class Vertex:
 
     def __init__(self, key):
@@ -110,8 +114,8 @@ class Graph:
         :return:
         """
         if origin not in self.vertices:
-            raise TypeError("origin vertex not found")
+            raise VertexNotFoundError("origin vertex not found")
         if destination not in self.vertices:
-            raise TypeError("destination vertex not found")
+            raise VertexNotFoundError("destination vertex not found")
         self.vertices[origin].add_adjacent(self.vertices[destination], weight)
         self.vertices[destination].add_adjacent(self.vertices[origin], weight)

@@ -11,7 +11,7 @@ class Vertex:
         self._adjacent[vertex] = weight
 
     def adjacent(self):
-        return self._adjacent.keys()
+        return self._adjacent
 
     @property
     def key(self):
@@ -90,9 +90,14 @@ class Graph:
     def remove_vertex(self, key):
         """
         Removes the vertex associated with the given key.
+        Also removes any edges that may have been associated with the vertex.
         :param key: in which to remove the vertex for.
         :return:
         """
+        removal_vertex = self.vertices[key]
+        adjacent_vertices = removal_vertex.adjacent()
+        for vertex in adjacent_vertices:
+            self.vertices[vertex.key].adjacent().pop(removal_vertex)
         self.vertices.pop(key)
 
     def add_edge(self, origin, destination, weight=0):

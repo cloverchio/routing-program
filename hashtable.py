@@ -11,6 +11,9 @@ class HashTable:
     def __len__(self):
         return self.size
 
+    def __contains__(self, item):
+        return self.get(item) is not None
+
     def get(self, key):
         """
         Retrieves the value associated with the key from the hashtable.

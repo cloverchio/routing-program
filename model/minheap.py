@@ -1,93 +1,51 @@
-from typing import Tuple
-
-
 class MinHeap:
 
-    def __init__(self, capacity=100):
+    def __init__(self):
         self.size = 0
-        self.capacity = capacity
-        self.heap = [(0.0, None)] * (capacity + 1)
-        self.heap[0] = (-1 * float('inf'), None)
         self.head_position = 1
+        self.heap = [((-1.0 * float('inf')), None)]
 
-    def __len__(self):
-        return self.size
-
-    def push(self, element: Tuple[float, any]):
-        """
-        Pushes the given element onto the heap.
-        If you did not bring a tuple one will be provided for you...
-        :param element: to be added to the heap.
-        :return:
-        """
-        if type(element) is not tuple:
+    def push(self, element):
+        if element is not type(tuple):
             element = (element, None)
-        self._increment_size()
-        self.heap[self.size] = element
-        current_position = self.size
-        parent_position = self._parent(current_position)
-        while self.heap[current_position][0] < self.heap[parent_position][0]:
-            self._swap(current_position, parent_position)
-            current_position = parent_position
+        self.heap.append(element)
+        self.size += 1
+        self._sift_up(self.size)
 
     def pop(self):
-        """
-        Pops the smallest element from the heap in the form of a tuple.
-        :return: the smallest element from the heap.
-        """
-        if self.size == 0:
+        if len(self.heap) == 1:
             raise ValueError("heap is empty")
         min_element = self.heap[self.head_position]
         self.heap[self.head_position] = self.heap[self.size]
-        self._decrement_size()
-        self.min_heapify(self.head_position)
+        self.heap.pop(self.head_position)
+        self.size -= 1
+        self._sift_down(self.head_position)
         return min_element
 
-    def min_heapify(self, position):
-        """
-        Performs the heapify operation at a given position.
-        Responsible for maintaining the ordering of elements on the heap.
-        :param position: in which to perform the heapify operation on.
-        :return:
-        """
-        if not self._leaf(position) and self.size > 0:
-            left_position = self._left(position)
-            right_position = self._right(position)
-            current = self.heap[position]
-            left = self.heap[left_position]
-            right = self.heap[right_position]
-            if current > left or current > right:
-                if left < right:
-                    self._swap(position, left_position)
-                    self.min_heapify(left_position)
-                else:
-                    self._swap(position, right_position)
-                    self.min_heapify(right_position)
+    def _sift_up(self, position):
+        parent_position = self._parent(position)
+        while parent_position:
+            if self.heap[position] < self.heap[parent_position]:
+                self._swap(position, parent_position)
+            parent_position = parent_position // 2
 
-    def min_heap(self):
-        """
-        Used to reconstruct the entire heap.
-        :return:
-        """
-        for position in range(self.size // 2, 0, -1):
-            self.min_heapify(position)
+    def _sift_down(self, position):
+        while self._left(position) <= self.size:
+            min_position = self._min_position(position)
+            if self.heap[position] > self.heap[min_position]:
+                self._swap(position, min_position)
+            position = min_position
 
-    def _increment_size(self):
-        if self.size + 1 > self.capacity:
-            self._resize()
-        self.size += 1
-
-    def _decrement_size(self):
-        self.size -= 1
-
-    def _resize(self):
-        temp = [None] * ((self.size * 2) + 1)
-        for i in range(0, len(self.heap)):
-            temp[i] = self.heap[i]
-        self.heap = temp
-
-    def _leaf(self, position):
-        return (self.size // 2) <= position <= self.size
+    def _min_position(self, position):
+        right_position = self._right(position)
+        left_position = self._left(position)
+        if right_position > self.size:
+            return left_position
+        else:
+            if self.heap[left_position] < self.heap[right_position]:
+                return left_position
+            else:
+                return right_position
 
     def _swap(self, first_position, second_position):
         temp = self.heap[first_position]

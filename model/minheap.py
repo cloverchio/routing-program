@@ -1,3 +1,6 @@
+from typing import Tuple
+
+
 class MinHeap:
 
     def __init__(self):
@@ -5,7 +8,13 @@ class MinHeap:
         self.head_position = 1
         self.heap = [((-1.0 * float('inf')), None)]
 
-    def push(self, element):
+    def push(self, element: Tuple[int, any]):
+        """
+        Pushes a given element onto the heap.
+        If you did not bring a tuple, one will be provided for you...
+        :param element: in which to add to the heap.
+        :return:
+        """
         if element is not type(tuple):
             element = (element, None)
         self.heap.append(element)
@@ -13,6 +22,10 @@ class MinHeap:
         self._sift_up(self.size)
 
     def pop(self):
+        """
+        Pops the minimum element from the heap.
+        :return: the smallest element from the heap.
+        """
         if len(self.heap) == 1:
             raise ValueError("heap is empty")
         min_element = self.heap[self.head_position]
@@ -44,8 +57,7 @@ class MinHeap:
         else:
             if self.heap[left_position] < self.heap[right_position]:
                 return left_position
-            else:
-                return right_position
+            return right_position
 
     def _swap(self, first_position, second_position):
         temp = self.heap[first_position]

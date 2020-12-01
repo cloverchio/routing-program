@@ -20,17 +20,14 @@ class HashTable:
         :param key: in which to retrieve the value for.
         :return: value associated with the key.
         """
-        bucket_index = self._hash(key)
-        bucket = self.table[bucket_index]
-        if bucket:
-            for entry in bucket:
-                if entry[0] == key:
-                    return entry[1]
+        bucket, bucket_index = self._bucket_entry(key)
+        if bucket_index is not None:
+            return bucket[bucket_index][1]
         return None
 
     def add(self, key, value):
         """
-        Adds an entry to the hashtable using the given key/value pair.
+        Adds an entry to the hashtable for the given key/value pair.
         :param key: to associate the value with.
         :param value: in which to retrieve using the key.
         :return:
@@ -38,14 +35,12 @@ class HashTable:
         if not key:
             raise TypeError("key must not be none")
         self._increment_size()
-        bucket_index = self._hash(key)
+        bucket, bucket_index = self._bucket_entry(key)
         bucket_value = (key, value)
-        bucket = self.table[bucket_index]
-        for i in range(0, len(bucket)):
-            if bucket[i][0] == key:
-                bucket[i] = bucket_value
-                return
-        bucket.append(bucket_value)
+        if bucket_index is not None:
+            bucket[bucket_index] = bucket_value
+        else:
+            bucket.append(bucket_value)
 
     def remove(self, key):
         """
@@ -53,14 +48,20 @@ class HashTable:
         :param key: in which to remove the entry for.
         :return:
         """
+        bucket, bucket_index = self._bucket_entry(key)
+        if bucket_index is not None:
+            bucket.pop(bucket_index)
+            self._decrement_size()
+
+    def _bucket_entry(self, key):
         bucket_index = self._hash(key)
         bucket = self.table[bucket_index]
         if bucket:
             for i in range(0, len(bucket)):
-                if bucket[i][0] == key:
-                    bucket.pop(i)
-                    self._decrement_size()
-                    return
+                entry = bucket[i]
+                if entry[0] == key:
+                    return bucket, i
+        return bucket, None
 
     def _hash(self, key):
         return hash(key) % len(self.table)

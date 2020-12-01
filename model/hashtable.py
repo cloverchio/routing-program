@@ -84,8 +84,3 @@ class HashTable:
             if bucket:
                 for entry in bucket:
                     self.add(entry[0], entry[1])
-
-    @staticmethod
-    def _ceil(n):
-        # rolling my own ceil function just in case the math module is not allowed
-        return int(-1 * n // 1 * -1)

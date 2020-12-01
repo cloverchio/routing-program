@@ -1,4 +1,4 @@
-class TruckAtCapacityError(Exception):
+class TruckAtCapacityError(ValueError):
     pass
 
 

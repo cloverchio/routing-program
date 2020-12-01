@@ -1,4 +1,4 @@
-class VertexNotFoundError(Exception):
+class VertexNotFoundError(ValueError):
     pass
 
 
@@ -16,6 +16,9 @@ class Vertex:
 
     def adjacent(self):
         return self._adjacent
+
+    def weight(self, vertex):
+        return self._adjacent[vertex]
 
     @property
     def key(self):

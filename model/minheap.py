@@ -54,10 +54,9 @@ class MinHeap:
         left_position = self._left(position)
         if right_position > self.size:
             return left_position
-        else:
-            if self.heap[left_position] < self.heap[right_position]:
-                return left_position
-            return right_position
+        if self.heap[left_position] < self.heap[right_position]:
+            return left_position
+        return right_position
 
     def _swap(self, first_position, second_position):
         temp = self.heap[first_position]

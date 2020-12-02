@@ -8,6 +8,9 @@ class MinHeap:
         self.head_position = 1
         self.heap = [((-1.0 * float('inf')), None)]
 
+    def __len__(self):
+        return self.size
+
     def push(self, element: Tuple[int, any]):
         """
         Pushes a given element onto the heap.
@@ -15,7 +18,8 @@ class MinHeap:
         :param element: in which to add to the heap.
         :return:
         """
-        if element is not type(tuple):
+        if type(element) is not tuple:
+            print(element)
             element = (element, None)
         self.heap.append(element)
         self.size += 1
@@ -38,14 +42,14 @@ class MinHeap:
     def _sift_up(self, position):
         parent_position = self._parent(position)
         while parent_position:
-            if self.heap[position] < self.heap[parent_position]:
+            if self.heap[position][0] < self.heap[parent_position][0]:
                 self._swap(position, parent_position)
             parent_position = parent_position // 2
 
     def _sift_down(self, position):
         while self._left(position) <= self.size:
             min_position = self._min_position(position)
-            if self.heap[position] > self.heap[min_position]:
+            if self.heap[position][0] > self.heap[min_position][0]:
                 self._swap(position, min_position)
             position = min_position
 
@@ -54,7 +58,7 @@ class MinHeap:
         left_position = self._left(position)
         if right_position > self.size:
             return left_position
-        if self.heap[left_position] < self.heap[right_position]:
+        if self.heap[left_position][0] < self.heap[right_position][0]:
             return left_position
         return right_position
 

@@ -1,4 +1,4 @@
-from model.graph import Vertex, Graph
+from model.minheap import MinHeap
 
 
 class RoutingService:
@@ -11,10 +11,31 @@ class RoutingService:
         :param graph: used to compare to routes.
         :param origin: the starting location
         """
-        origin.distance = 0
-        unvisited_queue = [(vertex.distance, vertex) for vertex in graph]
+        self.graph = graph
+        self.origin = origin
+        self._dijkstra()
+
+    def shortest_route(self, destination):
+        """
+        Retrieves a list of vertices that represent the
+        shortest path to the given destination vertex.
+        :param destination: vertex in which to get the shortest path to.
+        :return: shortest path to the destination.
+        """
+        route = [destination]
+        current = destination
+        while current is not self.origin:
+            route.append(current.previous)
+            current = current.previous
+        route.reverse()
+        return route
+
+    def _dijkstra(self):
+        self.origin.distance = 0
+        unvisited_queue = MinHeap()
+        for vertex in self.graph:
+            unvisited_queue.push((vertex.distance, vertex))
         while unvisited_queue:
-            unvisited_queue.sort(key=lambda pair: pair[0], reverse=True)
             smallest_vertex = unvisited_queue.pop()
             current_vertex = smallest_vertex[1]
             current_vertex.visited = True
@@ -25,5 +46,4 @@ class RoutingService:
                 if new_distance < adjacent_vertex.distance:
                     adjacent_vertex.distance = new_distance
                     adjacent_vertex.previous = current_vertex
-
-        # TODO finish implementation
+                    unvisited_queue.push((adjacent_vertex.distance, adjacent_vertex))

@@ -68,6 +68,9 @@ class Graph:
     def __contains__(self, item):
         return self.vertices[item] is not None
 
+    def __iter__(self):
+        return iter(self.vertices.values())
+
     def get_vertex(self, key):
         """
         Retrieves the vertex associated with the given key.
@@ -84,6 +87,15 @@ class Graph:
         :return: list of vertices.
         """
         return [str(vertex) for vertex in self.vertices.values()]
+
+    def add_vertices(self, keys):
+        """
+        Adds the given keys to the graph as vertices.
+        :param keys: in which to label the vertices.
+        :return:
+        """
+        for key in keys:
+            self.add_vertex(key)
 
     def add_vertex(self, key):
         """

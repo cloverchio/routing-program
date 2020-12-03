@@ -4,7 +4,7 @@ class TruckAtCapacityError(ValueError):
 
 class Truck:
 
-    def __init__(self, driver, location, speed=18, capacity=16):
+    def __init__(self, driver=None, location=None, speed=18, capacity=16):
         self._driver = driver
         self._location = location
         self._speed = speed

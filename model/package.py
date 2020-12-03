@@ -1,11 +1,28 @@
+from enum import Enum
+
+
+class DeliveryStatus(Enum):
+    DELIVERED = 'Delivered'
+    EN_ROUTE = 'En Route'
+    HUB = 'At Hub'
+
+
 class Package:
 
-    def __init__(self, id, address, city, zip, deadline, weight, state='UT', note=None, delivered=False):
+    def __init__(self, id=None,
+                 address=None,
+                 city=None,
+                 zip_code=None,
+                 deadline=None,
+                 weight=None,
+                 state='UT',
+                 note=None,
+                 delivered=DeliveryStatus.HUB):
         self._id = id
         self._address = address
         self._city = city
         self._state = state
-        self._zip = zip
+        self._zip = zip_code
         self._deadline = deadline
         self._weight = weight
         self._note = note
@@ -48,8 +65,8 @@ class Package:
         return self._zip
 
     @zip.setter
-    def zip(self, zip):
-        self._zip = zip
+    def zip(self, zip_code):
+        self._zip = zip_code
 
     @property
     def deadline(self):

@@ -33,7 +33,7 @@ class LoadingService:
     def load_truck_three(self, truck_three):
         """
         The third truck represents the first or second truck but with the third driver.
-        Used when the either of the two active trucks go back to the hub to load
+        Used when either of the two active trucks go back to the hub to load
         the delayed packages.
         :param truck_three: to fill with packages.
         :return:

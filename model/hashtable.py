@@ -2,17 +2,34 @@
 class HashTable:
 
     def __init__(self, capacity=100, load_factor=0.75):
-        self.table = []
-        self.load_factor = load_factor
-        self.size = 0
+        self._table = []
+        self._load_factor = load_factor
+        self._size = 0
         for i in range(0, capacity):
-            self.table.append([])
+            self._table.append([])
 
     def __len__(self):
-        return self.size
+        return self._size
 
     def __contains__(self, item):
         return self.get(item) is not None
+
+    def __iter__(self):
+        return iter(self._all_entries())
+
+    def keys(self):
+        """
+        Used to retrieve all of the keys in the hashtable.
+        :return: set of keys available in the hashtable.
+        """
+        return {entry[0] for entry in self._all_entries()}
+
+    def values(self):
+        """
+        Used to retrieve all of the values in the hashtable.
+        :return: list of values available in the hashtable.
+        """
+        return [entry[1] for entry in self._all_entries()]
 
     def get(self, key):
         """
@@ -53,35 +70,42 @@ class HashTable:
             bucket.pop(bucket_index)
             self._decrement_size()
 
+    def _hash(self, key):
+        return hash(key) % len(self._table)
+
+    def _increment_size(self):
+        current_load_factor = (1.0 * self._size) / len(self._table)
+        if current_load_factor > self._load_factor:
+            self._rehash()
+        self._size += 1
+
+    def _decrement_size(self):
+        self._size -= 1
+
+    def _rehash(self):
+        temp = self._table.copy()
+        self._table.clear()
+        self._size = 0
+        for i in range(0, len(temp) * 2):
+            self._table.append([])
+        for bucket in temp:
+            if bucket:
+                for entry in bucket:
+                    self.add(entry[0], entry[1])
+
+    def _all_entries(self):
+        entries = []
+        for bucket in self._table:
+            for entry in bucket:
+                entries.append(entry)
+        return entries
+
     def _bucket_entry(self, key):
         bucket_index = self._hash(key)
-        bucket = self.table[bucket_index]
+        bucket = self._table[bucket_index]
         if bucket:
             for i in range(0, len(bucket)):
                 entry = bucket[i]
                 if entry[0] == key:
                     return bucket, i
         return bucket, None
-
-    def _hash(self, key):
-        return hash(key) % len(self.table)
-
-    def _increment_size(self):
-        current_load_factor = (1.0 * self.size) / len(self.table)
-        if current_load_factor > self.load_factor:
-            self._rehash()
-        self.size += 1
-
-    def _decrement_size(self):
-        self.size -= 1
-
-    def _rehash(self):
-        temp = self.table.copy()
-        self.table.clear()
-        self.size = 0
-        for i in range(0, len(temp) * 2):
-            self.table.append([])
-        for bucket in temp:
-            if bucket:
-                for entry in bucket:
-                    self.add(entry[0], entry[1])

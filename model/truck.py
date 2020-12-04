@@ -4,7 +4,8 @@ class TruckAtCapacityError(ValueError):
 
 class Truck:
 
-    def __init__(self, driver=None, location=None, speed=18, capacity=16):
+    def __init__(self, truck_id=None, driver=None, location=None, speed=18, capacity=16):
+        self._id = truck_id
         self._driver = driver
         self._location = location
         self._speed = speed
@@ -21,6 +22,14 @@ class Truck:
         if item in self.undelivered:
             return True
         return False
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, truck_id):
+        self._id = truck_id
 
     @property
     def driver(self):

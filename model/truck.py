@@ -12,14 +12,14 @@ class Truck:
         self._capacity = capacity
         self._total_distance = 0
         self._size = 0
-        self.undelivered = []
-        self.delivered = []
+        self._undelivered = []
+        self._delivered = []
 
     def __len__(self):
         return self._size
 
     def __contains__(self, item):
-        if item in self.undelivered:
+        if item in self._undelivered:
             return True
         return False
 
@@ -71,6 +71,14 @@ class Truck:
     def total_distance(self, total_distance):
         self._total_distance = total_distance
 
+    def has_capacity(self):
+        """
+        Used to determine whether or not there is still space
+        on the truck.
+        :return:
+        """
+        return self._size < self._capacity
+
     def add_packages(self, packages):
         """
         Adds multiple packages to the undelivered queue.
@@ -88,5 +96,14 @@ class Truck:
         """
         if self._size + 1 > self._capacity:
             raise TruckAtCapacityError("truck is at capacity")
-        self.undelivered.append(package)
+        self._undelivered.append(package)
         self._size += 1
+
+    def sort_undelivered_packages(self):
+        """
+        Sorts undelivered packages by their deadlines.
+        This is so the higher priority ones are more easily accessible
+        at the back of the truck.
+        :return:
+        """
+        self._undelivered = sorted(self._undelivered, key=lambda package: package.deadline, reverse=True)

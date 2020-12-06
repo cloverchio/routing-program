@@ -1,5 +1,7 @@
-from model.package import Package
+from datetime import datetime
+
 from model.hashtable import HashTable
+from model.package import Package
 
 
 class PackagingService:
@@ -11,6 +13,7 @@ class PackagingService:
         """
         self._package_cache = HashTable()
         self._load_package_cache(package_data)
+        self._time_format = '%H:%M'
 
     def get_packages(self, package_ids):
         """
@@ -54,9 +57,16 @@ class PackagingService:
         package.address = package_data_row[1]
         package.city = package_data_row[2]
         package.zip = package_data_row[4]
-        package.deadline = package_data_row[5]
         package.weight = package_data_row[6]
         note = package_data_row[7]
+        # convert string based deadlines to something more easily sortable
+        deadline = package_data_row[5]
+        time_format = '%H:%M %p'
+        if deadline == 'EOD':
+            package.deadline = datetime.strptime('11:59 PM', time_format).time()
+        else:
+            package.deadline = datetime.strptime(deadline, time_format).time()
+        # avoid notes that are empty
         if note != '':
             package.note = note
         return package

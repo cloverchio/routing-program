@@ -19,7 +19,6 @@ class MinHeap:
         :return:
         """
         if type(element) is not tuple:
-            print(element)
             element = (element, None)
         self.heap.append(element)
         self.size += 1

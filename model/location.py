@@ -1,5 +1,4 @@
-
-class LocationDistance:
+class Location:
 
     def __init__(self, name=None, address=None, distances=None):
         self._name = name
@@ -29,4 +28,3 @@ class LocationDistance:
     @distances.setter
     def distances(self, distances):
         self._distances = distances
-

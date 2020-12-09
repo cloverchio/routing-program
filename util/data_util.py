@@ -33,6 +33,6 @@ class DataUtil:
         with open("data/" + file_path, 'r') as data_file:
             csv_reader = csv.reader(data_file)
             for row in csv_reader:
-                data.append(row)
+                data.append([val.strip() for val in row])
             data_file.close()
         return data

@@ -43,8 +43,6 @@ class RoutingService:
             current_vertex = smallest_vertex[1]
             current_vertex.visited = True
             for adjacent_vertex in current_vertex.adjacent():
-                if adjacent_vertex.visited:
-                    continue
                 new_distance = current_vertex.distance + current_vertex.weight(adjacent_vertex)
                 if new_distance < adjacent_vertex.distance:
                     adjacent_vertex.distance = new_distance

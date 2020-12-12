@@ -35,7 +35,7 @@ class Truck:
     def next_location(self):
         next_package = self._undelivered[-1]
         if next_package is not None:
-            return next_package.location
+            return next_package.address
         return None
 
     @property
@@ -127,7 +127,7 @@ class Truck:
         delivered.status = DeliveryStatus.DELIVERED
         self._size -= 1
         self._mileage += distance
-        self._location = delivered.location
+        self._location = delivered.address
         self._delivered.append(delivered)
 
     def return_to_starting_location(self, distance):

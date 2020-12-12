@@ -6,10 +6,7 @@ from service.routing_service import RoutingService
 class LocationService:
 
     def __init__(self, location_data, distance_data):
-        self._graph = Graph()
         self._locations = self._to_locations(location_data, distance_data)
-        self._graph_locations(self._graph, self._locations)
-        self._graph_distances(self._graph, self._locations)
 
     def get_shortest_distance(self, origin, destination):
         """
@@ -18,7 +15,10 @@ class LocationService:
         :param destination: the destination location.
         :return: the shortest distance between the origin and the destination.
         """
-        shortest_route = RoutingService(self._graph, origin).shortest_route(destination)
+        graph = Graph()
+        self._graph_locations(graph, self._locations)
+        self._graph_distances(graph, self._locations)
+        shortest_route = RoutingService(graph, origin).shortest_route(destination)
         return sum([vertex.distance for vertex in shortest_route])
 
     @staticmethod
@@ -26,7 +26,6 @@ class LocationService:
         location_len = len(locations)
         for i in range(0, location_len - 1):
             starting_location = locations[i]
-            print(starting_location.address)
             for j in range(i + 1, location_len):
                 next_location = locations[j]
                 graph.add_edge(starting_location.address, next_location.address, next_location.distances[i])

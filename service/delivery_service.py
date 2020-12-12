@@ -22,9 +22,9 @@ class DeliveryService:
         :return:
         """
         truck.location = self._starting_location
-        while len(truck) > 0:
+        while truck:
             shortest_distance = self._location_service.get_shortest_distance(truck.location, truck.next_location)
             truck.deliver_package(shortest_distance)
         truck.return_to_starting_location(
             self._location_service.get_shortest_distance(truck.location, self._starting_location))
-        self._total_distance += truck.total_distance
+        self._total_distance += truck.mileage

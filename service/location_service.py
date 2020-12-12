@@ -11,8 +11,15 @@ class LocationService:
         self._graph_locations(self._graph, self._locations)
         self._graph_distances(self._graph, self._locations)
 
-    def get_route(self, starting_location, next_location):
-        return RoutingService(self._graph, starting_location).shortest_route(next_location)
+    def get_shortest_distance(self, origin, destination):
+        """
+        Finds the shortest distance between two given locations.
+        :param origin: the origin location.
+        :param destination: the destination location.
+        :return: the shortest distance between the origin and the destination.
+        """
+        shortest_route = RoutingService(self._graph, origin).shortest_route(destination)
+        return sum([vertex.distance for vertex in shortest_route])
 
     @staticmethod
     def _graph_distances(graph, locations):

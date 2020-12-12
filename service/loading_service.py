@@ -25,7 +25,12 @@ class LoadingService:
                         self._wrong_address_packages,
                         self._prioritized_packages)
 
-    def load_truck_one(self, truck_one):
+    def load_trucks(self, truck_one, truck_two, truck_three):
+        self._load_truck_one(truck_one)
+        self._load_truck_two(truck_two)
+        self._load_truck_three(truck_three)
+
+    def _load_truck_one(self, truck_one):
         """
         Loads the first truck to capacity with packages.
         :param truck_one: to fill with packages.
@@ -37,7 +42,7 @@ class LoadingService:
             truck_one.add_package(self._packaging_service.get_package(self._remaining_packages.pop()))
         truck_one.sort_undelivered_packages()
 
-    def load_truck_two(self, truck_two):
+    def _load_truck_two(self, truck_two):
         """
         Loads the second truck to capacity with packages.
         :param truck_two: to fill with packages.
@@ -49,7 +54,7 @@ class LoadingService:
             truck_two.add_package(self._packaging_service.get_package(self._remaining_packages.pop()))
         truck_two.sort_undelivered_packages()
 
-    def load_truck_three(self, truck_three):
+    def _load_truck_three(self, truck_three):
         """
         The third truck represents the first or second truck but with the third driver.
         Used when either of the two active trucks go back to the hub to load

@@ -1,5 +1,4 @@
 from model.minheap import MinHeap
-from model.graph import Vertex
 
 
 class RoutingService:
@@ -9,8 +8,8 @@ class RoutingService:
         Uses Dijkstra's algorithm to find the best delivery route
         for a given starting location represented as a vertex on
         the graph.
-        :param graph: used to compare to routes.
-        :param origin: the starting location
+        :param graph: used to compare the routes.
+        :param origin: the starting location.
         """
         self._graph = graph
         self._origin = self._graph.get_vertex(origin)

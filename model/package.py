@@ -17,7 +17,7 @@ class Package:
                  weight=None,
                  state='UT',
                  note=None,
-                 delivered=DeliveryStatus.HUB):
+                 status=DeliveryStatus.HUB):
         self._id = id
         self._address = address
         self._city = city
@@ -26,7 +26,7 @@ class Package:
         self._deadline = deadline
         self._weight = weight
         self._note = note
-        self._delivered = delivered
+        self._status = status
 
     @property
     def id(self):
@@ -93,9 +93,9 @@ class Package:
         self._note = note
 
     @property
-    def delivered(self):
-        return self._delivered
+    def status(self):
+        return self._status
 
-    @delivered.setter
-    def delivered(self, delivered):
-        self._delivered = delivered
+    @status.setter
+    def status(self, status):
+        self._status = status

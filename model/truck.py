@@ -1,4 +1,11 @@
+from model.package import DeliveryStatus
+
+
 class TruckAtCapacityError(ValueError):
+    pass
+
+
+class TruckEmptyError(ValueError):
     pass
 
 
@@ -7,13 +14,14 @@ class Truck:
     def __init__(self, truck_id=None, driver=None, location=None, speed=18, capacity=16):
         self._id = truck_id
         self._driver = driver
+        self._starting_location = location
         self._location = location
         self._speed = speed
         self._capacity = capacity
-        self._total_distance = 0
-        self._size = 0
         self._undelivered = []
         self._delivered = []
+        self._mileage = 0
+        self._size = 0
 
     def __len__(self):
         return self._size
@@ -22,6 +30,13 @@ class Truck:
         if item in self._undelivered:
             return True
         return False
+
+    @property
+    def next_location(self):
+        next_package = self._undelivered[-1]
+        if next_package is not None:
+            return next_package.location
+        return None
 
     @property
     def id(self):
@@ -64,12 +79,12 @@ class Truck:
         self._capacity = capacity
 
     @property
-    def total_distance(self):
-        return self._total_distance
+    def mileage(self):
+        return self._mileage
 
-    @total_distance.setter
-    def total_distance(self, total_distance):
-        self._total_distance = total_distance
+    @mileage.setter
+    def mileage(self, mileage):
+        self._mileage = mileage
 
     def has_capacity(self):
         """
@@ -96,13 +111,39 @@ class Truck:
         """
         if self._size + 1 > self._capacity:
             raise TruckAtCapacityError("truck is at capacity")
+        package.status = DeliveryStatus.EN_ROUTE
         self._undelivered.append(package)
         self._size += 1
+
+    def deliver_package(self, distance):
+        """
+        Removes a package from the undelivered queue if the truck is not empty.
+        Updates delivery status, truck location, and distance.
+        :return:
+        """
+        if self._size == 0:
+            raise TruckEmptyError("truck is empty")
+        delivered = self._undelivered.pop()
+        delivered.status = DeliveryStatus.DELIVERED
+        self._size -= 1
+        self._mileage += distance
+        self._location = delivered.location
+        self._delivered.append(delivered)
+
+    def return_to_starting_location(self, distance):
+        """
+        Represents the truck traveling to its original location (the hub for example).
+        Sets the truck location to the starting location and updates the distance.
+        :param distance: to the starting location from the truck's current location.
+        :return:
+        """
+        self._mileage += distance
+        self._location = self._starting_location
 
     def sort_undelivered_packages(self):
         """
         Sorts undelivered packages by their deadlines.
-        This is so the higher priority ones are more easily accessible
+        This is so the higher priority packages are more easily accessible
         at the back of the truck.
         :return:
         """

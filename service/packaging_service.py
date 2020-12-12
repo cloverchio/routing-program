@@ -7,19 +7,14 @@ from model.package import Package
 class PackagingService:
 
     def __init__(self, package_data):
-        """
-        Responsible for managing package data.
-        :param package_data: to be managed and transformed.
-        """
         self._package_cache = HashTable()
         self._load_package_cache(package_data)
-        self._time_format = '%H:%M'
 
     def get_packages(self, package_ids):
         """
-        Retrieve data for multiple package ids.
+        Retrieves package data for the given package ids.
         :param package_ids: in which to retrieve package data for.
-        :return: list of package objects associated with the ids.
+        :return: list of packages associated with the given ids.
         """
         return [self.get_package(package_id) for package_id in package_ids]
 
@@ -27,20 +22,20 @@ class PackagingService:
         """
         Retrieve package data by a given package id.
         :param package_id: in which to retrieve package data for.
-        :return: the package object associated with the id.
+        :return: the package associated with the id.
         """
         return self._package_cache.get(package_id)
 
     def get_all_package_ids(self):
         """
-        Retrieves a set of all package ids.
+        Retrieves a set of all available package ids.
         :return: set of all package ids.
         """
         return self._package_cache.keys()
 
     def get_all_packages(self):
         """
-        Retrieves a list of all packages.
+        Retrieves a list of all available packages.
         :return: list of all packages.
         """
         return self._package_cache.values()

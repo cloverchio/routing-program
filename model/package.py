@@ -1,6 +1,11 @@
 from enum import Enum
 
 
+class Priority(Enum):
+    HIGH = 'High'
+    LOW = 'Low'
+
+
 class DeliveryStatus(Enum):
     DELIVERED = 'Delivered'
     EN_ROUTE = 'En Route'
@@ -9,7 +14,7 @@ class DeliveryStatus(Enum):
 
 class Package:
 
-    def __init__(self, id=None,
+    def __init__(self, package_id=None,
                  address=None,
                  city=None,
                  zip_code=None,
@@ -17,8 +22,9 @@ class Package:
                  weight=None,
                  state='UT',
                  note=None,
-                 status=DeliveryStatus.HUB):
-        self._id = id
+                 status=DeliveryStatus.HUB,
+                 priority=Priority.LOW):
+        self._id = package_id
         self._address = address
         self._city = city
         self._state = state
@@ -27,14 +33,15 @@ class Package:
         self._weight = weight
         self._note = note
         self._status = status
+        self._priority = priority
 
     @property
     def id(self):
         return self._id
 
     @id.setter
-    def id(self, id):
-        self._id = id
+    def id(self, package_id):
+        self._id = package_id
 
     @property
     def address(self):
@@ -99,3 +106,11 @@ class Package:
     @status.setter
     def status(self, status):
         self._status = status
+
+    @property
+    def priority(self):
+        return self._priority
+
+    @priority.setter
+    def priority(self, priority):
+        self._priority = priority

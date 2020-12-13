@@ -37,10 +37,10 @@ class LoadingService:
         :return:
         """
         truck_one.add_packages(self._packaging_service.get_packages(self._dependent_packages))
-        truck_one.add_packages(self._packaging_service.get_packages(self._prioritized_packages))
+        truck_one.add_priority(self._packaging_service.get_packages(self._prioritized_packages))
         while self._remaining_packages and truck_one.has_capacity():
             truck_one.add_package(self._packaging_service.get_package(self._remaining_packages.pop()))
-        truck_one.sort_undelivered_packages()
+        truck_one.sort_priority_packages()
 
     def _load_truck_two(self, truck_two):
         """
@@ -52,7 +52,7 @@ class LoadingService:
         truck_two.add_packages(self._packaging_service.get_packages(self._delayed_packages))
         while self._remaining_packages and truck_two.has_capacity():
             truck_two.add_package(self._packaging_service.get_package(self._remaining_packages.pop()))
-        truck_two.sort_undelivered_packages()
+        truck_two.sort_priority_packages()
 
     def _load_truck_three(self, truck_three):
         """

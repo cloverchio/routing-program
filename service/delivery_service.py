@@ -21,6 +21,7 @@ class DeliveryService:
         :param truck: to deliver packages with.
         :return:
         """
+        # TODO rework to use priority vs non priority
         truck.location = self._starting_location
         while truck:
             shortest_distance = self._location_service.get_shortest_distance(truck.location, truck.next_location)

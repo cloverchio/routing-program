@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from model.hashtable import HashTable
-from model.package import Package
+from model.package import Package, Priority
 
 
 class PackagingService:
@@ -60,6 +60,7 @@ class PackagingService:
         if deadline == 'EOD':
             package.deadline = datetime.strptime('11:59 PM', time_format).time()
         else:
+            package.priority = Priority.HIGH
             package.deadline = datetime.strptime(deadline, time_format).time()
         # avoid notes that are empty
         if note != '':

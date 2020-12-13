@@ -1,3 +1,4 @@
+from model.hashtable import HashTable
 from model.package import DeliveryStatus, Priority
 
 
@@ -18,8 +19,8 @@ class Truck:
         self._location = location
         self._speed = speed
         self._capacity = capacity
-        self._undelivered_priority_packages = []
-        self._undelivered_packages = []
+        self._undelivered_priority_packages = HashTable()
+        self._undelivered_packages = HashTable()
         self._delivered_packages = []
         self._mileage = 0
         self._size = 0
@@ -28,21 +29,11 @@ class Truck:
         return self._size
 
     def __contains__(self, item):
+        if item in self._undelivered_priority_packages:
+            return True
         if item in self._undelivered_packages:
             return True
         return False
-
-    def next_priority_location(self):
-        next_priority_package = self._undelivered_priority_packages[-1]
-        if next_priority_package is not None:
-            return next_priority_package.address
-        return None
-
-    def next_location(self):
-        next_package = self._undelivered_packages[-1]
-        if next_package is not None:
-            return next_package.address
-        return None
 
     def undelivered_priority_packages(self):
         return self._undelivered_priority_packages
@@ -111,7 +102,7 @@ class Truck:
 
     def add_packages(self, packages):
         """
-        Adds multiple packages to the undelivered queue.
+        Adds multiple packages to the undelivered hashtable.
         :param packages: to be added to the undelivered queue.
         :return:
         """
@@ -120,36 +111,39 @@ class Truck:
 
     def add_package(self, package):
         """
-        Adds a single package to the undelivered queue if the truck is not at capacity.
+        Adds a single package to the undelivered hashtable
+        if the truck is not at capacity.
         :param package: to be added to the undelivered queue.
         :return:
         """
         if self._size + 1 > self._capacity:
             raise TruckAtCapacityError("truck is at capacity")
         package.status = DeliveryStatus.EN_ROUTE
-        if package.priority == Priority.HIGH:
-            self._undelivered_priority_packages.append(package)
-        else:
-            self._undelivered_packages.append(package)
         self._size += 1
+        if package.priority == Priority.HIGH:
+            self._undelivered_priority_packages.add(package.id, package)
+        else:
+            self._undelivered_packages.add(package.id, package)
 
-    def deliver_priority_package(self, distance):
+    def deliver_priority_package(self, package_id, distance):
         """
-        Removes a package from the undelivered priority queue if the truck is not empty.
+        Removes a package from the priority undelivered hashtable if the truck is not empty.
         Updates delivery status, truck location, and distance.
+        :param package_id: id of the package being delivered.
         :param distance: distance of the route taken to deliver the package.
         :return:
         """
-        self._deliver_package(distance, self._undelivered_priority_packages)
+        self._deliver_package(package_id, distance, self._undelivered_priority_packages)
 
-    def deliver_package(self, distance):
+    def deliver_package(self, package_id, distance):
         """
-        Removes a package from the undelivered queue if the truck is not empty.
+        Removes a package from the undelivered hashtable if the truck is not empty.
         Updates delivery status, truck location, and distance.
+        :param package_id: id of the package being delivered.
         :param distance: distance of the route taken to deliver the package.
         :return:
         """
-        self._deliver_package(distance, self._undelivered_packages)
+        self._deliver_package(package_id, distance, self._undelivered_packages)
 
     def return_to_starting_location(self, distance):
         """
@@ -161,22 +155,12 @@ class Truck:
         self._mileage += distance
         self._location = self._starting_location
 
-    def sort_priority_packages(self):
-        """
-        Sorts undelivered priority packages by their deadlines.
-        This is so the higher priority packages are more easily accessible
-        at the back of the truck.
-        :return:
-        """
-        self._undelivered_priority_packages = sorted(self._undelivered_priority_packages,
-                                                     key=lambda package: package.deadline,
-                                                     reverse=True)
-
-    def _deliver_package(self, distance, undelivered_packages):
+    def _deliver_package(self, package_id, distance, undelivered_packages):
         if self._size == 0:
             raise TruckEmptyError("truck is empty")
-        delivered = undelivered_packages.pop()
+        delivered = undelivered_packages.get(package_id)
         delivered.status = DeliveryStatus.DELIVERED
+        undelivered_packages.remove(package_id)
         self._size -= 1
         self._mileage += distance
         self._location = delivered.address

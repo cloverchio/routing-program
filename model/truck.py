@@ -1,5 +1,5 @@
 from model.hashtable import HashTable
-from model.package import DeliveryStatus, Priority
+from model.package import DeliveryStatus
 
 
 class TruckAtCapacityError(ValueError):
@@ -19,7 +19,6 @@ class Truck:
         self._location = location
         self._speed = speed
         self._capacity = capacity
-        self._undelivered_priority_packages = HashTable()
         self._undelivered_packages = HashTable()
         self._delivered_packages = []
         self._mileage = 0
@@ -29,14 +28,9 @@ class Truck:
         return self._size
 
     def __contains__(self, item):
-        if item in self._undelivered_priority_packages:
-            return True
         if item in self._undelivered_packages:
             return True
         return False
-
-    def undelivered_priority_packages(self):
-        return self._undelivered_priority_packages
 
     def undelivered_packages(self):
         return self._undelivered_packages
@@ -120,20 +114,7 @@ class Truck:
             raise TruckAtCapacityError("truck is at capacity")
         package.status = DeliveryStatus.EN_ROUTE
         self._size += 1
-        if package.priority == Priority.HIGH:
-            self._undelivered_priority_packages.add(package.id, package)
-        else:
-            self._undelivered_packages.add(package.id, package)
-
-    def deliver_priority_package(self, package_id, distance):
-        """
-        Removes a package from the priority undelivered hashtable if the truck is not empty.
-        Updates delivery status, truck location, and distance.
-        :param package_id: id of the package being delivered.
-        :param distance: distance of the route taken to deliver the package.
-        :return:
-        """
-        self._deliver_package(package_id, distance, self._undelivered_priority_packages)
+        self._undelivered_packages.add(package.id, package)
 
     def deliver_package(self, package_id, distance):
         """

@@ -1,4 +1,5 @@
 from model.graph import Graph
+from model.hashtable import HashTable
 from model.location import Location
 from service.routing_service import RoutingService
 
@@ -7,6 +8,7 @@ class LocationService:
 
     def __init__(self, location_data, distance_data):
         self._locations = self._to_locations(location_data, distance_data)
+        self._distance_cache = HashTable()
 
     def get_shortest_distance(self, origin, destination):
         """
@@ -15,11 +17,16 @@ class LocationService:
         :param destination: the destination location.
         :return: the shortest distance between the origin and the destination.
         """
+        cache_key = (origin, destination)
+        if cache_key in self._distance_cache:
+            return self._distance_cache.get(cache_key)
         graph = Graph()
         self._graph_locations(graph, self._locations)
         self._graph_distances(graph, self._locations)
         shortest_route = RoutingService(graph, origin).shortest_route(destination)
-        return sum([vertex.distance for vertex in shortest_route])
+        shortest_distance = sum([vertex.distance for vertex in shortest_route])
+        self._distance_cache.add(cache_key, shortest_distance)
+        return shortest_distance
 
     @staticmethod
     def _graph_distances(graph, locations):

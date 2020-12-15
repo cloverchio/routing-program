@@ -1,4 +1,3 @@
-from model.hashtable import HashTable
 from model.package import DeliveryStatus
 
 
@@ -12,31 +11,22 @@ class TruckEmptyError(ValueError):
 
 class Truck:
 
-    def __init__(self, truck_id=None, driver=None, location=None, speed=18, capacity=16):
+    def __init__(self, truck_id=None, driver=None, location=None, speed=18, capacity=16, packaging_service=None):
         self._id = truck_id
         self._driver = driver
-        self._starting_location = location
         self._location = location
         self._speed = speed
         self._capacity = capacity
-        self._undelivered_packages = HashTable()
-        self._delivered_packages = []
+        self._packaging_service = packaging_service
+        self._package_ids = []
         self._mileage = 0
         self._size = 0
 
     def __len__(self):
         return self._size
 
-    def __contains__(self, item):
-        if item in self._undelivered_packages:
-            return True
-        return False
-
-    def undelivered_packages(self):
-        return self._undelivered_packages
-
-    def delivered_packages(self):
-        return self._delivered_packages
+    def assigned_packages(self):
+        return self._package_ids
 
     @property
     def id(self):
@@ -79,6 +69,14 @@ class Truck:
         self._capacity = capacity
 
     @property
+    def packaging_service(self):
+        return self._packaging_service
+
+    @packaging_service.setter
+    def packaging_service(self, packaging_service):
+        self._packaging_service = packaging_service
+
+    @property
     def mileage(self):
         return self._mileage
 
@@ -94,55 +92,55 @@ class Truck:
         """
         return self._size < self._capacity
 
-    def add_packages(self, packages):
+    def add_packages(self, package_ids):
         """
-        Adds multiple packages to the undelivered hashtable.
-        :param packages: to be added to the undelivered queue.
+        Assigns multiple package ids to the truck for delivery.
+        :param package_ids: to be assigned to the truck.
         :return:
         """
-        for package in packages:
-            self.add_package(package)
+        for package_id in package_ids:
+            self.add_package(package_id)
 
-    def add_package(self, package):
+    def add_package(self, package_id):
         """
-        Adds a single package to the undelivered hashtable
-        if the truck is not at capacity.
-        :param package: to be added to the undelivered queue.
+        Assigns the given package id to the truck for delivery
+        and updates the delivery status of the corresponding package.
+        :param package_id: to be assigned to the truck.
         :return:
         """
         if self._size + 1 > self._capacity:
             raise TruckAtCapacityError("truck is at capacity")
-        package.status = DeliveryStatus.EN_ROUTE
+        self._packaging_service.update_delivery_status(package_id, DeliveryStatus.EN_ROUTE)
         self._size += 1
-        self._undelivered_packages.add(package.id, package)
+        self._package_ids.append(package_id)
 
     def deliver_package(self, package_id, distance):
         """
-        Removes a package from the undelivered hashtable if the truck is not empty.
-        Updates delivery status, truck location, and distance.
-        :param package_id: id of the package being delivered.
-        :param distance: distance of the route taken to deliver the package.
+        Sets the truck's location to the delivery address, updates the mileage,
+        and sets the delivery status of the package to delivered.
+        Size of the truck is then decremented.
+        :param package_id:
+        :param distance:
         :return:
         """
-        self._deliver_package(package_id, distance, self._undelivered_packages)
+        self._deliver_package(package_id, distance)
 
-    def return_to_starting_location(self, distance):
+    def return_to_starting_location(self, starting_location, distance):
         """
         Represents the truck traveling to its original location (the hub for example).
         Sets the truck location to the starting location and updates the distance.
+        :param starting_location: the location in which delivery started from.
         :param distance: to the starting location from the truck's current location.
         :return:
         """
         self._mileage += distance
-        self._location = self._starting_location
+        self._location = starting_location
 
-    def _deliver_package(self, package_id, distance, undelivered_packages):
+    def _deliver_package(self, package_id, distance):
         if self._size == 0:
             raise TruckEmptyError("truck is empty")
-        delivered = undelivered_packages.get(package_id)
-        delivered.status = DeliveryStatus.DELIVERED
-        undelivered_packages.remove(package_id)
+        self._packaging_service.update_delivery_status(package_id, DeliveryStatus.DELIVERED)
+        package = self._packaging_service.get_package(package_id)
         self._size -= 1
         self._mileage += distance
-        self._location = delivered.address
-        self._delivered_packages.append(delivered)
+        self._location = package.address

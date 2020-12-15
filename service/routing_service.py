@@ -1,50 +1,89 @@
-from model.minheap import MinHeap
+from model.graph import Graph
+from model.hashtable import HashTable
+from model.location import Location
+from service.location_service import LocationService
 
 
 class RoutingService:
 
-    def __init__(self, graph, origin):
-        """
-        Uses Dijkstra's algorithm to find the best delivery route
-        for a given starting location represented as a vertex on
-        the graph.
-        :param graph: used to compare the routes.
-        :param origin: the starting location.
-        """
-        self._graph = graph
-        self._origin = self._graph.get_vertex(origin)
-        self._dijkstra()
+    def __init__(self, location_data, distance_data):
+        self._locations = self._to_locations(location_data, distance_data)
+        self._distance_cache = HashTable()
 
-    def shortest_route(self, destination):
+    def get_delivery_route(self, current_location, undelivered_packages):
         """
-        Retrieves a list of vertices that represent the
-        shortest path to the given destination vertex.
-        :param destination: vertex in which to get the shortest path to.
-        :return: shortest path to the destination.
+        Builds a delivery route for the given packages using locally optimal
+        addresses to that of the address that was previously delivered to.
+        :param current_location: current location of the truck.
+        :param undelivered_packages: the packages that will need to be delivered.
+        :return:
         """
-        route = []
-        destination_vertex = self._graph.get_vertex(destination)
-        if destination_vertex:
-            route.append(destination_vertex)
-            current = destination_vertex
-            while current is not self._origin:
-                route.append(current.previous)
-                current = current.previous
-            route.reverse()
-        return route
+        delivery_route = []
+        while undelivered_packages:
+            closest_delivery = self.find_closest_delivery(current_location, undelivered_packages)
+            delivery_route.append(closest_delivery)
+            current_location = closest_delivery[1]
+            undelivered_packages.remove(closest_delivery[0])
+        return delivery_route
 
-    def _dijkstra(self):
-        self._origin.distance = 0
-        unvisited_queue = MinHeap()
-        for vertex in self._graph:
-            unvisited_queue.push((vertex.distance, vertex))
-        while unvisited_queue:
-            smallest_vertex = unvisited_queue.pop()
-            current_vertex = smallest_vertex[1]
-            current_vertex.visited = True
-            for adjacent_vertex in current_vertex.adjacent():
-                new_distance = current_vertex.distance + current_vertex.weight(adjacent_vertex)
-                if new_distance < adjacent_vertex.distance:
-                    adjacent_vertex.distance = new_distance
-                    adjacent_vertex.previous = current_vertex
-                    unvisited_queue.push((adjacent_vertex.distance, adjacent_vertex))
+    def find_closest_delivery(self, current_location, undelivered_packages):
+        """
+        Finds the package address with the smallest distance to that of the current location.
+        :param current_location: the current location in which to deliver from.
+        :param undelivered_packages: in which to find the next closest delivery.
+        :return:
+        """
+        distances = []
+        for package in undelivered_packages.values():
+            shortest_distance = self.get_shortest_distance(current_location, package.address)
+            distances.append((package.id, package.address, shortest_distance))
+        return min(distances, key=lambda distance: distance[2])
+
+    def get_shortest_distance(self, origin, destination):
+        """
+        Finds the shortest distance between two given locations.
+        :param origin: the origin location.
+        :param destination: the destination location.
+        :return: the shortest distance between the origin and the destination.
+        """
+        cache_key = (origin, destination)
+        if cache_key in self._distance_cache:
+            return self._distance_cache.get(cache_key)
+        graph = Graph()
+        self._graph_locations(graph, self._locations)
+        self._graph_distances(graph, self._locations)
+        shortest_route = LocationService(graph, origin).shortest_route(destination)
+        shortest_distance = sum([vertex.distance for vertex in shortest_route])
+        self._distance_cache.add(cache_key, shortest_distance)
+        return shortest_distance
+
+    @staticmethod
+    def _graph_distances(graph, locations):
+        location_len = len(locations)
+        for i in range(0, location_len - 1):
+            starting_location = locations[i]
+            for j in range(i + 1, location_len):
+                next_location = locations[j]
+                graph.add_edge(starting_location.address, next_location.address, next_location.distances[i])
+
+    @staticmethod
+    def _graph_locations(graph, locations):
+        for location in locations:
+            graph.add_vertex(location.address)
+
+    @staticmethod
+    def _to_locations(location_data, distance_data):
+        locations = []
+        for row_index in range(0, len(location_data)):
+            location_row = location_data[row_index]
+            distances = [float(distance) for distance in distance_data[row_index] if distance != '']
+            locations.append(RoutingService._to_location(location_row[0], location_row[1], distances))
+        return locations
+
+    @staticmethod
+    def _to_location(name, address, distances):
+        location_distance = Location()
+        location_distance.name = name
+        location_distance.address = address
+        location_distance.distances = distances
+        return location_distance

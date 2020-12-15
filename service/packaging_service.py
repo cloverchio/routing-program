@@ -10,6 +10,19 @@ class PackagingService:
         self._package_cache = HashTable()
         self._load_package_cache(package_data)
 
+    def update_delivery_status(self, package_id, delivery_status):
+        """
+        Updates the delivery status of the package associated with
+        the given id.
+        :param package_id: of the package in which to update the delivery status.
+        :param delivery_status: to update the package with.
+        :return:
+        """
+        package = self._package_cache.get(package_id)
+        if package is not None:
+            package.status = delivery_status
+            self._package_cache.add(package_id, package)
+
     def get_packages(self, package_ids):
         """
         Retrieves package data for the given package ids.

@@ -3,6 +3,7 @@ class HashTable:
 
     def __init__(self, capacity=100, load_factor=0.75):
         self._table = []
+        self._capacity = capacity
         self._load_factor = load_factor
         self._size = 0
         for i in range(0, capacity):

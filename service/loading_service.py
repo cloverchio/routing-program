@@ -25,44 +25,29 @@ class LoadingService:
                         self._wrong_address_packages,
                         self._prioritized_packages)
 
-    def load_trucks(self, truck_one, truck_two, truck_three):
-        """
-        Loads the corresponding trucks with the appropriate packages
-        by assigning them their share of package ids.
-        :param truck_one: to assign packages to.
-        :param truck_two: to assign packages to.
-        :param truck_three: to assign packages to.
-        :return:
-        """
-        self._load_truck_one(truck_one)
-        self._load_truck_two(truck_two)
-        self._load_truck_three(truck_three)
-
-    def _load_truck_one(self, truck_one):
+    def load_truck_one(self, truck_one):
         """
         Loads the first truck to capacity with packages.
         :param truck_one: to assign package ids to.
         :return:
         """
-        truck_one.packaging_service = self._packaging_service
         truck_one.add_packages(self._dependent_packages)
         truck_one.add_packages(self._prioritized_packages)
         while self._remaining_packages and truck_one.has_capacity():
             truck_one.add_package(self._remaining_packages.pop())
 
-    def _load_truck_two(self, truck_two):
+    def load_truck_two(self, truck_two):
         """
         Loads the second truck to capacity with packages.
         :param truck_two: to assign package ids to.
         :return:
         """
-        truck_two.packaging_service = self._packaging_service
         truck_two.add_packages(self._truck_two_specific_packages)
         truck_two.add_packages(self._delayed_packages)
         while self._remaining_packages and truck_two.has_capacity():
             truck_two.add_package(self._remaining_packages.pop())
 
-    def _load_truck_three(self, truck_three):
+    def load_truck_three(self, truck_three):
         """
         The third truck represents the first or second truck but with the third driver.
         Used when either of the two active trucks go back to the hub to load
@@ -70,7 +55,6 @@ class LoadingService:
         :param truck_three: to assign package ids to.
         :return:
         """
-        truck_three.packaging_service = self._packaging_service
         truck_three.add_packages(self._wrong_address_packages)
         while self._remaining_packages and truck_three.has_capacity():
             truck_three.add_package(self._remaining_packages.pop())

@@ -1,12 +1,16 @@
 from model.hashtable import HashTable
+from service.loading_service import LoadingService
+from service.packaging_service import PackagingService
 from service.routing_service import RoutingService
 
 
 class DeliveryService:
 
-    def __init__(self, starting_location, location_data, distance_data):
-        self._starting_location = starting_location
+    def __init__(self, starting_location, location_data, distance_data, package_data):
+        self._packaging_service = PackagingService(package_data)
+        self._loading_service = LoadingService(self._packaging_service)
         self._routing_service = RoutingService(location_data, distance_data)
+        self._starting_location = starting_location
         self._total_distance = 0
 
     def total_distance(self):
@@ -33,6 +37,23 @@ class DeliveryService:
         hub_distance = self._routing_service.get_shortest_distance(truck.location, self._starting_location)
         truck.return_to_starting_location(self._starting_location, hub_distance)
         self._total_distance += truck.mileage
+
+    def load_packages(self, trucks):
+        """
+        Manages the loading of packages onto the trucks.
+        Delegates to the loading service for assigning the appropriate
+        ids to each truck.
+        :param trucks: in which to load packages onto.
+        :return:
+        """
+        for truck in trucks:
+            truck.packaging_service = self._packaging_service
+            if truck.id == 1:
+                self._loading_service.load_truck_one(truck)
+            if truck.id == 2:
+                self._loading_service.load_truck_two(truck)
+            if truck.id == 3:
+                self._loading_service.load_truck_three(truck)
 
     @staticmethod
     def _undelivered_packages(packaging_service, assigned_package_ids):

@@ -1,7 +1,7 @@
 from model.minheap import MinHeap
 
 
-class LocationService:
+class RouteUtil:
 
     def __init__(self, graph, origin):
         """

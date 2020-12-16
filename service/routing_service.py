@@ -1,7 +1,7 @@
 from model.graph import Graph
 from model.hashtable import HashTable
 from model.location import Location
-from service.location_service import LocationService
+from util.route_util import RouteUtil
 
 
 class RoutingService:
@@ -52,7 +52,7 @@ class RoutingService:
         graph = Graph()
         self._graph_locations(graph, self._locations)
         self._graph_distances(graph, self._locations)
-        shortest_route = LocationService(graph, origin).shortest_route(destination)
+        shortest_route = RouteUtil(graph, origin).shortest_route(destination)
         shortest_distance = sum([vertex.distance for vertex in shortest_route])
         self._distance_cache.add(cache_key, shortest_distance)
         return shortest_distance

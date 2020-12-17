@@ -22,6 +22,7 @@ class Package:
                  weight=None,
                  state='UT',
                  note=None,
+                 en_route_time=None,
                  delivery_time=None,
                  status=DeliveryStatus.HUB,
                  priority=Priority.LOW):
@@ -32,28 +33,21 @@ class Package:
         self._zip = zip_code
         self._deadline = deadline
         self._weight = weight
+        self._en_route_time = en_route_time
         self._delivery_time = delivery_time
         self._note = note
         self._status = status
         self._priority = priority
 
     def __str__(self):
-        return "Package Id: {}, " \
-               "Address: {}, " \
-               "City: {}, " \
-               "Zip: {}, " \
-               "Weight: {}, " \
-               "Deadline: {}, " \
-               "Status: {}, " \
-               "Time Delivered: {}" \
-            .format(self._id,
-                    self._address,
-                    self._city,
-                    self._zip,
-                    self._weight,
-                    self._deadline,
-                    self._status.value,
-                    self._delivery_time)
+        return self._str_format(self._status, self._delivery_time)
+
+    def status_by_time(self, time):
+        if self._delivery_time <= time:
+            return str(self)
+        if self._en_route_time <= time < self._delivery_time:
+            return self._str_format(DeliveryStatus.EN_ROUTE.value, None)
+        return self._str_format(DeliveryStatus.HUB.value, None)
 
     @property
     def id(self):
@@ -120,6 +114,14 @@ class Package:
         self._note = note
 
     @property
+    def en_route_time(self):
+        return self._en_route_time
+
+    @en_route_time.setter
+    def en_route_time(self, en_route_time):
+        self._en_route_time = en_route_time
+
+    @property
     def delivery_time(self):
         return self._delivery_time
 
@@ -142,3 +144,21 @@ class Package:
     @priority.setter
     def priority(self, priority):
         self._priority = priority
+
+    def _str_format(self, status, delivery_time):
+        return "Package Id: {}, " \
+               "Address: {}, " \
+               "City: {}, " \
+               "Zip: {}, " \
+               "Weight: {}, " \
+               "Deadline: {}, " \
+               "Status: {}, " \
+               "Time Delivered: {}" \
+            .format(self._id,
+                    self._address,
+                    self._city,
+                    self._zip,
+                    self._weight,
+                    self._deadline,
+                    status,
+                    delivery_time)

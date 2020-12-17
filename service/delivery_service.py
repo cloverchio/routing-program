@@ -13,10 +13,21 @@ class DeliveryService:
         self._starting_location = starting_location
         self._total_distance = 0
 
+    def package_status_by_time(self, time):
+        """
+        Retrieves the string representation of all packages at the
+        given time. Uses the delivery status that would have correlated with
+        that time. Should satisfy the requires of section G.
+        :param time: in which to retrieve the status of the packages.
+        :return:
+        """
+        packages = self._packaging_service.get_all_packages()
+        return [package.status_by_time(time) for package in packages]
+
     def package_status(self, package_id):
         """
         Retrieves the string representation of the package, which should have 
-        all of the elements required to satisfy requirement F.
+        all of the elements required to satisfy section F.
         :param package_id: in which to retrieve package data for.
         :return:
         """

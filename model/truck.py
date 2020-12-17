@@ -17,6 +17,7 @@ class Truck:
                  truck_id=None,
                  driver=None,
                  location=None,
+                 start_time=None,
                  current_time=None,
                  speed=18,
                  capacity=16,
@@ -24,6 +25,7 @@ class Truck:
         self._id = truck_id
         self._driver = driver
         self._location = location
+        self._start_time = start_time
         self._current_time = current_time
         self._speed = speed
         self._capacity = capacity
@@ -68,6 +70,8 @@ class Truck:
 
     @current_time.setter
     def current_time(self, current_time):
+        if self._start_time is None:
+            self._start_time = current_time
         self._current_time = current_time
 
     @property
@@ -166,6 +170,7 @@ class Truck:
         self._location = package.address
         self._current_time += self._travel_time(distance)
         package.status = DeliveryStatus.DELIVERED
+        package.en_route_time = self._start_time
         package.delivery_time = self._current_time
         self._packaging_service.update_package(package)
 

@@ -10,7 +10,7 @@ class LoadingService:
         # packages that have been delayed
         self._delayed_packages = {6, 17, 25, 28, 32}
         # packages that have wrong address
-        self._wrong_address_packages = {9}
+        self._wrong_address_packages = {9, 25}
         # packages that have a strict deadline and haven't been previously categorized
         self._prioritized_packages = {1, 6, 13, 14, 15, 16, 20, 25, 29, 30, 31, 34, 37, 40} \
             .difference(self._truck_two_specific_packages,

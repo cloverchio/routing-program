@@ -10,18 +10,14 @@ class PackagingService:
         self._package_cache = HashTable()
         self._load_package_cache(package_data)
 
-    def update_delivery_status(self, package_id, delivery_status):
+    def update_package(self, package):
         """
-        Updates the delivery status of the package associated with
-        the given id.
-        :param package_id: of the package in which to update the delivery status.
-        :param delivery_status: to update the package with.
+        Adds the updated package back to the cache.
+        :param package: the updated package.
         :return:
         """
-        package = self._package_cache.get(package_id)
         if package is not None:
-            package.status = delivery_status
-            self._package_cache.add(package_id, package)
+            self._package_cache.add(package.id, package)
 
     def get_packages(self, package_ids):
         """
@@ -69,7 +65,7 @@ class PackagingService:
         note = package_data_row[7]
         # convert string based deadlines to something more easily sortable
         deadline = package_data_row[5]
-        time_format = '%H:%M %p'
+        time_format = '%I:%M %p'
         if deadline == 'EOD':
             package.deadline = datetime.strptime('11:59 PM', time_format).time()
         else:

@@ -22,6 +22,7 @@ class Package:
                  weight=None,
                  state='UT',
                  note=None,
+                 delivery_time=None,
                  status=DeliveryStatus.HUB,
                  priority=Priority.LOW):
         self._id = package_id
@@ -31,9 +32,28 @@ class Package:
         self._zip = zip_code
         self._deadline = deadline
         self._weight = weight
+        self._delivery_time = delivery_time
         self._note = note
         self._status = status
         self._priority = priority
+
+    def __str__(self):
+        return "Package Id: {}, " \
+               "Address: {}, " \
+               "City: {}, " \
+               "Zip: {}, " \
+               "Weight: {}, " \
+               "Deadline: {}, " \
+               "Status: {}, " \
+               "Time Delivered: {}" \
+            .format(self._id,
+                    self._address,
+                    self._city,
+                    self._zip,
+                    self._weight,
+                    self._deadline,
+                    self._status.value,
+                    self._delivery_time)
 
     @property
     def id(self):
@@ -98,6 +118,14 @@ class Package:
     @note.setter
     def note(self, note):
         self._note = note
+
+    @property
+    def delivery_time(self):
+        return self._delivery_time
+
+    @delivery_time.setter
+    def delivery_time(self, delivery_time):
+        self._delivery_time = delivery_time
 
     @property
     def status(self):

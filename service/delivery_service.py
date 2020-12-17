@@ -13,6 +13,15 @@ class DeliveryService:
         self._starting_location = starting_location
         self._total_distance = 0
 
+    def package_status(self, package_id):
+        """
+        Retrieves the string representation of the package, which should all
+        of the elements required to satisfy requirement F.
+        :param package_id: in which to retrieve package data for.
+        :return:
+        """
+        return str(self._packaging_service.get_package(package_id))
+
     def total_distance(self):
         """
         Retrieves the total distance of the deliveries
@@ -20,23 +29,6 @@ class DeliveryService:
         :return: total distance covered by the trucks during their deliveries.
         """
         return self._total_distance
-
-    def deliver_packages(self, truck):
-        """
-        Manages the deliveries for a given truck. Continually updates location
-        and package data before eventually making its way back to the hub.
-        Total distance is then updated with the truck's mileage.
-        :param truck: in which to deliver packages with.
-        :return:
-        """
-        truck.location = self._starting_location
-        undelivered_packages = self._undelivered_packages(truck.packaging_service, truck.assigned_packages())
-        delivery_route = self._routing_service.get_delivery_route(self._starting_location, undelivered_packages)
-        for delivery in delivery_route:
-            truck.deliver_package(delivery[0], delivery[2])
-        hub_distance = self._routing_service.get_shortest_distance(truck.location, self._starting_location)
-        truck.return_to_starting_location(self._starting_location, hub_distance)
-        self._total_distance += truck.mileage
 
     def load_packages(self, trucks):
         """
@@ -54,6 +46,25 @@ class DeliveryService:
                 self._loading_service.load_truck_two(truck)
             if truck.id == 3:
                 self._loading_service.load_truck_three(truck)
+
+    def deliver_packages(self, truck, start_time):
+        """
+        Manages the deliveries for a given truck. Continually updates location
+        and package data before eventually making its way back to the hub.
+        Total distance is then updated with the truck's mileage.
+        :param truck: in which to deliver packages with.
+        :param start_time: the delivery start time.
+        :return:
+        """
+        truck.current_time = start_time
+        truck.location = self._starting_location
+        undelivered_packages = self._undelivered_packages(truck.packaging_service, truck.assigned_packages())
+        delivery_route = self._routing_service.get_delivery_route(self._starting_location, undelivered_packages)
+        for delivery in delivery_route:
+            truck.deliver_package(delivery[0], delivery[2])
+        hub_distance = self._routing_service.get_shortest_distance(truck.location, self._starting_location)
+        truck.return_to_starting_location(self._starting_location, hub_distance)
+        self._total_distance += truck.mileage
 
     @staticmethod
     def _undelivered_packages(packaging_service, assigned_package_ids):

@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from model.package import DeliveryStatus
 
 
@@ -11,10 +13,18 @@ class TruckEmptyError(ValueError):
 
 class Truck:
 
-    def __init__(self, truck_id=None, driver=None, location=None, speed=18, capacity=16, packaging_service=None):
+    def __init__(self,
+                 truck_id=None,
+                 driver=None,
+                 location=None,
+                 current_time=None,
+                 speed=18,
+                 capacity=16,
+                 packaging_service=None):
         self._id = truck_id
         self._driver = driver
         self._location = location
+        self._current_time = current_time
         self._speed = speed
         self._capacity = capacity
         self._packaging_service = packaging_service
@@ -51,6 +61,14 @@ class Truck:
     @location.setter
     def location(self, location):
         self._location = location
+
+    @property
+    def current_time(self):
+        return self._current_time
+
+    @current_time.setter
+    def current_time(self, current_time):
+        self._current_time = current_time
 
     @property
     def speed(self):
@@ -110,9 +128,11 @@ class Truck:
         """
         if self._size + 1 > self._capacity:
             raise TruckAtCapacityError("truck is at capacity")
-        self._packaging_service.update_delivery_status(package_id, DeliveryStatus.EN_ROUTE)
         self._size += 1
         self._package_ids.append(package_id)
+        package = self._packaging_service.get_package(package_id)
+        package.status = DeliveryStatus.EN_ROUTE
+        self._packaging_service.update_package(package)
 
     def deliver_package(self, package_id, distance):
         """
@@ -135,12 +155,19 @@ class Truck:
         """
         self._mileage += distance
         self._location = starting_location
+        self._current_time += self._travel_time(distance)
 
     def _deliver_package(self, package_id, distance):
         if self._size == 0:
             raise TruckEmptyError("truck is empty")
-        self._packaging_service.update_delivery_status(package_id, DeliveryStatus.DELIVERED)
         package = self._packaging_service.get_package(package_id)
         self._size -= 1
         self._mileage += distance
         self._location = package.address
+        self._current_time += self._travel_time(distance)
+        package.status = DeliveryStatus.DELIVERED
+        package.delivery_time = self._current_time
+        self._packaging_service.update_package(package)
+
+    def _travel_time(self, distance):
+        return timedelta(hours=distance / self._speed)

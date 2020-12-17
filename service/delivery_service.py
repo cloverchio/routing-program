@@ -15,8 +15,8 @@ class DeliveryService:
 
     def package_status(self, package_id):
         """
-        Retrieves the string representation of the package, which should all
-        of the elements required to satisfy requirement F.
+        Retrieves the string representation of the package, which should have 
+        all of the elements required to satisfy requirement F.
         :param package_id: in which to retrieve package data for.
         :return:
         """

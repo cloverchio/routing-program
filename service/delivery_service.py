@@ -19,7 +19,7 @@ class DeliveryService:
         """
         Retrieves the string representation of all packages at the
         given time. Uses the delivery status that would have correlated with
-        that time. Should satisfy the requires of section G.
+        that time.
         :param time: in which to retrieve the status of the packages.
         :return:
         """
@@ -28,8 +28,7 @@ class DeliveryService:
 
     def package_status(self, package_id):
         """
-        Retrieves the string representation of the package, which should have 
-        all of the elements required to satisfy section F.
+        Retrieves the string representation of the package.
         :param package_id: in which to retrieve package data for.
         :return:
         """
@@ -82,7 +81,7 @@ class DeliveryService:
         undelivered_packages = self._undelivered_packages(truck.packaging_service, truck.assigned_packages())
         delivery_route = self._routing_service.get_delivery_route(self._starting_location, undelivered_packages)
         for delivery in delivery_route:
-            truck.deliver_package(delivery[0], delivery[2])
+            truck.deliver_package(delivery.package_id, delivery.distance)
         hub_distance = self._routing_service.get_shortest_distance(truck.location, self._starting_location)
         truck.return_to_starting_location(self._starting_location, hub_distance)
         self._total_mileage += truck.mileage

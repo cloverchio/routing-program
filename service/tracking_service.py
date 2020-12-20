@@ -26,6 +26,9 @@ class TrackingService:
     def status_by_package_id(self, package_id):
         """
         Retrieves a string representation of the package status.
+
+        Relates to section F of the requirements.
+
         :param package_id: in which to retrieve the status for.
         :return: status to be displayed in the console for given package id.
         """
@@ -34,6 +37,9 @@ class TrackingService:
     def status_by_time(self, time_str):
         """
         Retrieves the status for all of the packages within the given timeframe.
+
+        Relates to section G of the requirements.
+
         :param time_str: the timeframe in which to lookup the package statuses.
         :return: statuses to be displayed in the console for the given timeframe.
         """
@@ -49,6 +55,9 @@ class TrackingService:
         """
         Retrieves a string representation of the total mileage
         of the delivery. The sum of miles across all trucks.
+
+        Relates to section G of the requirements.
+
         :return: the sum of miles across all trucks.
         """
         return str(self._delivery_service.total_mileage())

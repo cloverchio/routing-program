@@ -1,7 +1,14 @@
-# E. Develop a hash table, without using any additional libraries or classes.
 class HashTable:
 
     def __init__(self, capacity=100, load_factor=0.75):
+        """
+        Custom hashtable implementation.
+
+        Relates to section E of the requirements.
+
+        :param capacity: in which to initialize the hashtable with.
+        :param load_factor: in which to initialize the hashtable with.
+        """
         self._table = []
         self._capacity = capacity
         self._load_factor = load_factor

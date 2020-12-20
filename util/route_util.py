@@ -8,6 +8,9 @@ class RouteUtil:
         Uses Dijkstra's algorithm to find the best delivery route
         for a given starting location represented as a vertex on
         the graph.
+
+        Relates to section A of the requirements.
+
         :param graph: used to compare the routes.
         :param origin: the starting location.
         """

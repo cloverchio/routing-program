@@ -4,6 +4,13 @@ from typing import Tuple
 class MinHeap:
 
     def __init__(self):
+        """
+        Custom heap implementation.
+        Mainly used for the facilitation of Dijkstra's algorithm.
+
+        Relates to section D of the requirements.
+
+        """
         self.size = 0
         self.head_position = 1
         self.heap = [((-1.0 * float('inf')), None)]

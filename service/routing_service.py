@@ -1,3 +1,4 @@
+from model.delivery import Delivery
 from model.graph import Graph
 from model.hashtable import HashTable
 from model.location import Location
@@ -14,6 +15,9 @@ class RoutingService:
         """
         Builds a delivery route for the given packages using locally optimal
         addresses to that of the address that was previously delivered to.
+
+        Relates to section A of the requirements.
+
         :param current_location: current location of the truck.
         :param undelivered_packages: the packages that will need to be delivered.
         :return:
@@ -22,8 +26,8 @@ class RoutingService:
         while undelivered_packages:
             closest_delivery = self.find_closest_delivery(current_location, undelivered_packages)
             delivery_route.append(closest_delivery)
-            current_location = closest_delivery[1]
-            undelivered_packages.remove(closest_delivery[0])
+            current_location = closest_delivery.address
+            undelivered_packages.remove(closest_delivery.package_id)
         return delivery_route
 
     def find_closest_delivery(self, current_location, undelivered_packages):
@@ -33,11 +37,11 @@ class RoutingService:
         :param undelivered_packages: in which to find the next closest delivery.
         :return:
         """
-        distances = []
+        deliveries = []
         for package in undelivered_packages.values():
             shortest_distance = self.get_shortest_distance(current_location, package.address)
-            distances.append((package.id, package.address, shortest_distance))
-        return min(distances, key=lambda distance: distance[2])
+            deliveries.append(Delivery(package.id, package.address, shortest_distance))
+        return min(deliveries, key=lambda delivery: delivery.distance)
 
     def get_shortest_distance(self, origin, destination):
         """

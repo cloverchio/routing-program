@@ -30,6 +30,14 @@ def menu():
 """
 
 
+def print_output(output):
+    print("[*]", output)
+
+
+def print_error(error):
+    print("[-]", error)
+
+
 if __name__ == '__main__':
     print(banner())
     tracking_service = TrackingService()
@@ -39,24 +47,25 @@ if __name__ == '__main__':
             command = user_input[0].strip()
             # there are likely more parsing errors that can occur...
             # but no need to handle every case for this project
+            no_valid_argument = len(user_input) == 1 or user_input[1] == ''
             if command == 'package':
-                if len(user_input) == 1 or user_input[1] == '':
-                    print("[-] a package id is required")
+                if no_valid_argument:
+                    print_error("a package id is required")
                 else:
-                    print("[*]", tracking_service.status_by_package_id(user_input[1]))
+                    print_output(tracking_service.status_by_package_id(user_input[1]))
             elif command == 'packages':
-                if len(user_input) == 1 or user_input[1] == '':
-                    print("[-] a time in the format of HH:MM:SS is required")
+                if no_valid_argument:
+                    print_error("a time in the format of HH:MM:SS is required")
                 elif len(user_input[1].split(":")) != 3:
-                    print("[-] time must be in HH:MM:SS format")
+                    print_error("time must be in HH:MM:SS format")
                 else:
                     for status in tracking_service.status_by_time(user_input[1]):
-                        print("[*]", status)
+                        print_output(status)
             elif command == 'mileage':
-                print("[*]", tracking_service.mileage())
+                print_output(tracking_service.mileage())
             elif command == 'exit':
                 exit(0)
             else:
-                print("[-] not a valid command")
+                print_error("not a valid command")
         except KeyboardInterrupt:
             exit(0)

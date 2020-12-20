@@ -169,7 +169,7 @@ class Truck:
         self._mileage += distance
         self._location = package.address
         self._current_time += self._travel_time(distance)
-        package.status = DeliveryStatus.DELIVERED
+        package.status = DeliveryStatus.DELIVERED.value
         package.en_route_time = self._start_time
         package.delivery_time = self._current_time
         self._packaging_service.update_package(package)

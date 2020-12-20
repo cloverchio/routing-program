@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from model.hashtable import HashTable
 from service.loading_service import LoadingService
 from service.packaging_service import PackagingService
@@ -58,15 +60,23 @@ class DeliveryService:
             if truck.id == 3:
                 self._loading_service.load_truck_three(truck)
 
-    def deliver_packages(self, truck, start_time):
+    def deliver_packages(self, trucks):
         """
-        Manages the deliveries for a given truck. Continually updates location
-        and package data before eventually making its way back to the hub.
+        Manages the delivery process for the given trucks. Continually updates location
+        and package data before eventually making their way back to the hub.
         Total distance is then updated with the truck's mileage.
-        :param truck: in which to deliver packages with.
-        :param start_time: the delivery start time.
+        :param trucks: in which to deliver packages with.
         :return:
         """
+        for truck in trucks:
+            if truck.id == 1:
+                self._deliver_packages(truck, timedelta(hours=8))
+            if truck.id == 2:
+                self._deliver_packages(truck, timedelta(hours=9, minutes=5))
+            if truck.id == 3:
+                self._deliver_packages(truck, timedelta(hours=10, minutes=13))
+
+    def _deliver_packages(self, truck, start_time):
         truck.current_time = start_time
         truck.location = self._starting_location
         undelivered_packages = self._undelivered_packages(truck.packaging_service, truck.assigned_packages())

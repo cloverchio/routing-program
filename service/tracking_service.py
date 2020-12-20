@@ -17,17 +17,11 @@ class TrackingService:
                                                  data.location_data(),
                                                  data.distance_data(),
                                                  data.package_data())
-        truck1 = Truck(1, 1)
-        truck2 = Truck(2, 2)
-        # represents first or second truck but with the third driver
-        truck3 = Truck(3, 3)
+        # define trucks
+        trucks = [Truck(1, 1), Truck(2, 2), Truck(3, 3)]
         # load and deliver packages
-        self._delivery_service.load_packages([truck1, truck2, truck3])
-        self._delivery_service.deliver_packages(truck1, timedelta(hours=8))
-        self._delivery_service.deliver_packages(truck2, timedelta(hours=9, minutes=5))
-        # package 9 is on truck 3 and gets an updated address at 10:20
-        # but the truck leaves earlier to deliver other packages first
-        self._delivery_service.deliver_packages(truck3, timedelta(hours=10, minutes=13))
+        self._delivery_service.load_packages(trucks)
+        self._delivery_service.deliver_packages(trucks)
 
     def status_by_package_id(self, package_id):
         """

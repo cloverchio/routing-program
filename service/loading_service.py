@@ -8,7 +8,7 @@ class LoadingService:
         # packages that have dependencies on each other
         self._dependent_packages = {13, 14, 15, 16, 19, 20}
         # packages that have been delayed
-        self._delayed_packages = {6, 17, 25, 28, 32}
+        self._delayed_packages = {6, 17, 28, 32}
         # packages that have wrong address
         self._wrong_address_packages = {9, 25}
         # packages that have a strict deadline and haven't been previously categorized

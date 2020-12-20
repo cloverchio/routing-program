@@ -11,7 +11,7 @@ class DeliveryService:
         self._loading_service = LoadingService(self._packaging_service)
         self._routing_service = RoutingService(location_data, distance_data)
         self._starting_location = starting_location
-        self._total_distance = 0
+        self._total_mileage = 0
 
     def package_status_by_time(self, time):
         """
@@ -33,13 +33,13 @@ class DeliveryService:
         """
         return str(self._packaging_service.get_package(package_id))
 
-    def total_distance(self):
+    def total_mileage(self):
         """
-        Retrieves the total distance of the deliveries
+        Retrieves the total mileage of the deliveries
         that were performed by the instance of the service.
         :return: total distance covered by the trucks during their deliveries.
         """
-        return self._total_distance
+        return self._total_mileage
 
     def load_packages(self, trucks):
         """
@@ -75,7 +75,7 @@ class DeliveryService:
             truck.deliver_package(delivery[0], delivery[2])
         hub_distance = self._routing_service.get_shortest_distance(truck.location, self._starting_location)
         truck.return_to_starting_location(self._starting_location, hub_distance)
-        self._total_distance += truck.mileage
+        self._total_mileage += truck.mileage
 
     @staticmethod
     def _undelivered_packages(packaging_service, assigned_package_ids):

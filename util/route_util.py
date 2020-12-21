@@ -16,7 +16,7 @@ class RouteUtil:
         """
         self._graph = graph
         self._origin = self._graph.get_vertex(origin)
-        self._dijkstra()
+        self._dijkstra(self._origin, self._graph)
 
     def shortest_route(self, destination):
         """
@@ -36,10 +36,11 @@ class RouteUtil:
             route.reverse()
         return route
 
-    def _dijkstra(self):
-        self._origin.distance = 0
+    @staticmethod
+    def _dijkstra(origin, graph):
+        origin.distance = 0
         unvisited_queue = MinHeap()
-        for vertex in self._graph:
+        for vertex in graph:
             unvisited_queue.push((vertex.distance, vertex))
         while unvisited_queue:
             smallest_vertex = unvisited_queue.pop()

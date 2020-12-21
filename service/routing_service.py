@@ -10,6 +10,9 @@ class RoutingService:
     def __init__(self, location_data, distance_data):
         self._locations = self._to_locations(location_data, distance_data)
         self._distance_cache = HashTable()
+        self._graph = Graph()
+        self._graph_locations(self._graph, self._locations)
+        self._graph_distances(self._graph, self._locations)
 
     def get_delivery_route(self, current_location, undelivered_packages):
         """
@@ -53,10 +56,7 @@ class RoutingService:
         cache_key = (origin, destination)
         if cache_key in self._distance_cache:
             return self._distance_cache.get(cache_key)
-        graph = Graph()
-        self._graph_locations(graph, self._locations)
-        self._graph_distances(graph, self._locations)
-        shortest_route = RouteUtil(graph, origin).shortest_route(destination)
+        shortest_route = RouteUtil(self._graph, origin).shortest_route(destination)
         shortest_distance = sum([vertex.distance for vertex in shortest_route])
         self._distance_cache.add(cache_key, shortest_distance)
         return shortest_distance

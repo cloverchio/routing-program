@@ -1,4 +1,5 @@
 from model.minheap import MinHeap
+from copy import deepcopy
 
 
 class RouteUtil:
@@ -14,7 +15,7 @@ class RouteUtil:
         :param graph: used to compare the routes.
         :param origin: the starting location.
         """
-        self._graph = graph
+        self._graph = deepcopy(graph)
         self._origin = self._graph.get_vertex(origin)
         self._dijkstra(self._origin, self._graph)
 

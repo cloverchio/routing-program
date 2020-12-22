@@ -23,7 +23,7 @@ def banner():
 def menu():
     return """
 [+] package <package_id> - to retrieve the status of of an individual package
-[+] packages <HH:MM_SS> - to retrieve the status of all packages at a given 24 hour time
+[+] packages <HH:MM:SS> - to retrieve the status of all packages at a given 24 hour time
 [+] mileage - to retrieve the total mileage of the trucks after delivery
 [+] exit - to exit the program
 

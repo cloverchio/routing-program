@@ -81,13 +81,5 @@ class RoutingService:
         for row_index in range(0, len(location_data)):
             location_row = location_data[row_index]
             distances = [float(distance) for distance in distance_data[row_index] if distance != '']
-            locations.append(RoutingService._to_location(location_row[0], location_row[1], distances))
+            locations.append(Location(location_row[0], location_row[1], distances))
         return locations
-
-    @staticmethod
-    def _to_location(name, address, distances):
-        location_distance = Location()
-        location_distance.name = name
-        location_distance.address = address
-        location_distance.distances = distances
-        return location_distance
